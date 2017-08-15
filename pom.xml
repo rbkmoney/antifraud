@@ -197,22 +197,6 @@
                 </executions>
             </plugin>
 
-            <!--get Git revision, branch, etc.-->
-            <plugin>
-                <groupId>ru.concerteza.buildnumber</groupId>
-                <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-                <version>1.2.9</version>
-                <executions>
-                    <execution>
-                        <id>git-buildnumber</id>
-                        <goals>
-                            <goal>extract-buildnumber</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- JOOQ -->
             <!--<plugin>
                 <groupId>org.jooq</groupId>
