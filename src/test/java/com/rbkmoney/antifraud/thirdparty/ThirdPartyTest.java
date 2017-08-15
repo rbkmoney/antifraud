@@ -1,8 +1,17 @@
 package com.rbkmoney.antifraud.thirdparty;
 
 import com.rbkmoney.antifraud.domain.tables.pojos.Payment;
+import com.rbkmoney.damsel.domain.RiskScore;
+import com.rbkmoney.damsel.proxy_inspector.InspectorProxySrv;
+import com.rbkmoney.woody.thrift.impl.http.THSpawnClientBuilder;
+import org.apache.thrift.TException;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static com.rbkmoney.antifraud.thirdparty.AfServiceTest.createContext;
 
 @Ignore
 public class ThirdPartyTest {
@@ -27,5 +36,18 @@ public class ThirdPartyTest {
 
         System.out.println(service.inspect(payment)
         );
+    }
+
+    @Test
+    public void testLoad() throws URISyntaxException {
+        InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + 8022 + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
+        for (int i = 0; i < 1000; i++) {
+            try {
+                RiskScore riskScore = client.inspectPayment(createContext());
+            } catch (TException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

@@ -51,7 +51,7 @@ public class AfServiceTest {
         }
     }
 
-    private static Context createContext() {
+    public static Context createContext() {
         return new Context(
                 new PaymentInfo(
                         new Shop("2035728______",
