@@ -42,7 +42,6 @@ public class AfService {
             Response response = client.newCall(
                     new Request.Builder()
                             .url(preAuthUrl)
-                            .addHeader("content-type", "")
                             .post(RequestBody.create(MediaType.parse("application/json"), requestStr)).build()
             ).execute();
             String responseStr = response.body().string();//todo add resp size limits
