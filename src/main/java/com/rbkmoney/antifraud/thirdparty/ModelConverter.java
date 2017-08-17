@@ -51,7 +51,7 @@ public class ModelConverter {
         model.put("id", payment.getInvoiceId() + "." + payment.getPaymentId());
         model.put("description", payment.getDescription());
         model.put("amount", payment.getAmount() / 100.);//todo get minor value from DM conf
-        model.put("currency", payment.getCurrency());
+        model.put("currency", "RUR");
         return model;
     }
 
