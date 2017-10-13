@@ -6,7 +6,7 @@
 
     <groupId>com.rbkmoney</groupId>
     <artifactId>antifraud</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <description>AntiFraud inspection service</description>
 
     <parent>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.183-a282232</version>
+            <version>1.203-50a6930</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
@@ -104,7 +104,7 @@
         <dependency>
             <groupId>com.rbkmoney.woody</groupId>
             <artifactId>woody-thrift</artifactId>
-            <version>1.1.7</version>
+            <version>1.1.9</version>
         </dependency>
         <dependency>
             <groupId>net.logstash.logback</groupId>

@@ -15,7 +15,7 @@ public class ProtocolConverter {
         afPayment.setCurrency(cash.getCurrency().getSymbolicCode());
         BankCard card = context.getPayment().getPayment().getPayer().getPaymentTool().getBankCard();
         afPayment.setCardToken(card.getToken());
-        afPayment.setCardMask(card.getMaskedPan());//todo pan + bin?
+        afPayment.setCardMask(card.getBin() + "******" + card.getMaskedPan());
 
         ContactInfo contactInfo = context.getPayment().getPayment().getPayer().getContactInfo();
         afPayment.setClientEmail(contactInfo.getEmail());
