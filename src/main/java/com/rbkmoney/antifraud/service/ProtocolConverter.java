@@ -1,10 +1,7 @@
 package com.rbkmoney.antifraud.service;
 
 import com.rbkmoney.antifraud.domain.tables.pojos.Payment;
-import com.rbkmoney.damsel.domain.BankCard;
-import com.rbkmoney.damsel.domain.Cash;
-import com.rbkmoney.damsel.domain.ClientInfo;
-import com.rbkmoney.damsel.domain.ContactInfo;
+import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.damsel.proxy_inspector.Context;
 
 public class ProtocolConverter {
@@ -13,14 +10,14 @@ public class ProtocolConverter {
         Cash cash = context.getPayment().getPayment().getCost();
         afPayment.setAmount(cash.getAmount());
         afPayment.setCurrency(cash.getCurrency().getSymbolicCode());
-        BankCard card = context.getPayment().getPayment().getPayer().getPaymentTool().getBankCard();
+        BankCard card = getBankCard(context);
         afPayment.setCardToken(card.getToken());
         afPayment.setCardMask(card.getBin() + "******" + card.getMaskedPan());
 
-        ContactInfo contactInfo = context.getPayment().getPayment().getPayer().getContactInfo();
+        ContactInfo contactInfo = getContactInfo(context);
         afPayment.setClientEmail(contactInfo.getEmail());
 
-        ClientInfo clientInfo = context.getPayment().getPayment().getPayer().getClientInfo();
+        ClientInfo clientInfo = getClientInfo(context);
         afPayment.setClientIp(clientInfo.getIpAddress());
         afPayment.setClientFingerprint(clientInfo.getFingerprint());
 
@@ -34,5 +31,33 @@ public class ProtocolConverter {
         afPayment.setShopName(context.getPayment().getShop().getDetails().getName());
         afPayment.setShopUrl(context.getPayment().getShop().getLocation().getUrl());
         return afPayment;
+    }
+
+    public static BankCard getBankCard(Context context) {
+        Payer payer = context.getPayment().getPayment().getPayer();
+        if (payer.isSetCustomer()) {
+            if (payer.getCustomer().getPaymentTool().isSetBankCard()) {
+                return payer.getCustomer().getPaymentTool().getBankCard();
+            }
+        } else if (payer.isSetPaymentResource()) {
+            if (payer.getPaymentResource().getResource().getPaymentTool().isSetBankCard()) {
+                return payer.getPaymentResource().getResource().getPaymentTool().getBankCard();
+            }
+        }
+        return null;
+    }
+
+    public static ContactInfo getContactInfo(Context context) {
+        if (context.getPayment().getPayment().getPayer().isSetPaymentResource()) {
+            return context.getPayment().getPayment().getPayer().getPaymentResource().getContactInfo();
+        }
+        return null;
+    }
+
+    public static ClientInfo getClientInfo(Context context) {
+        if (context.getPayment().getPayment().getPayer().isSetPaymentResource()) {
+            return context.getPayment().getPayment().getPayer().getPaymentResource().getResource().getClientInfo();
+        }
+        return null;
     }
 }

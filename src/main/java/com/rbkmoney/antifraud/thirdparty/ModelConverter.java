@@ -52,7 +52,7 @@ public class ModelConverter {
         model.put("id", payment.getInvoiceId() + "." + payment.getPaymentId());
         model.put("description", Optional.ofNullable(payment.getDescription()).orElse(""));
         model.put("amount", new BigDecimal(payment.getAmount()).movePointLeft(2));//todo get minor value from DM conf
-        model.put("currency", "RUR");
+        model.put("currency", "RUR");//Third party old processing bug, must be RUB but it's not recognised. Must be fixed in new processing version
         return model;
     }
 

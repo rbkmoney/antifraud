@@ -31,6 +31,7 @@ public class AfServiceTest {
     @Value("${local.server.port}")
     protected int port;
 
+    //@Ignore
     @Test
     public void integrationTest() throws URISyntaxException, TException {
         InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
@@ -56,7 +57,7 @@ public class AfServiceTest {
     public void testPaymentToolValidation() throws TException, URISyntaxException {
         InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
         Context context = createContext();
-        context.getPayment().getPayment().getPayer().getPaymentTool().setPaymentTerminal(new PaymentTerminal(TerminalPaymentProvider.euroset));
+        context.getPayment().getPayment().getPayer().getPaymentResource().getResource().getPaymentTool().setPaymentTerminal(new PaymentTerminal(TerminalPaymentProvider.euroset));
         client.inspectPayment(context);
     }
 
@@ -72,29 +73,25 @@ public class AfServiceTest {
                         ),
                         new InvoicePayment("pId",
                                 "",
-                                new Payer(
-                                        new PaymentTool() {{
+                                Payer.payment_resource(
+                                        new PaymentResourcePayer(new DisposablePaymentResource(new PaymentTool() {{
                                             setBankCard(new BankCard(
                                                     "477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05",
                                                     BankCardPaymentSystem.mastercard,
                                                     "424242",
-                                                    "424242******4242"
+                                                    "4242"
                                             ));
-                                        }},
-                                        "sessionId",
-                                        new ClientInfo() {{
+                                        }}, new ClientInfo() {{
                                             setIpAddress("192.42.116.16");
                                             setFingerprint("11111111111111111111111111111111111111");
-                                        }},
-                                        new ContactInfo() {{
+                                        }}), new ContactInfo() {{
                                             setEmail("v.pankrashkin@rbkmoney.com");
-                                        }}
+                                        }})
                                 ),
                                 new Cash(
                                         9000000000000000000L,
                                         new CurrencyRef("RUB")
-                                )
-                        ),
+                                )),
                         new Invoice(
                                 "iId",
                                 "",

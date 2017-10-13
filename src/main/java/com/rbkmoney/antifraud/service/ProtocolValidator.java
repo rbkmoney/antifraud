@@ -10,8 +10,8 @@ import java.util.Arrays;
  */
 public class ProtocolValidator {
     public static void validate(Context context) throws InvalidRequest {
-        if (!context.getPayment().getPayment().getPayer().getPaymentTool().isSetBankCard()) {
-            throw new InvalidRequest(Arrays.asList("PaymentTool is not supported"));
+        if (ProtocolConverter.getBankCard(context) == null) {
+            throw new InvalidRequest(Arrays.asList("BankCard is not specified"));
         }
     }
 }
