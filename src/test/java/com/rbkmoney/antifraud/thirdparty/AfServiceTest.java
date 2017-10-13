@@ -63,7 +63,7 @@ public class AfServiceTest {
     public static Context createContext() {
         return new Context(
                 new PaymentInfo(
-                        new Shop("2035728______",
+                        new Shop("2035728",
                                 new Category("pizza", "no category"),
                                 new ShopDetails("pizza-sushi"),
                                 new ShopLocation() {{

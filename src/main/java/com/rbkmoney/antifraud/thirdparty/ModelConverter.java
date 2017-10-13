@@ -52,7 +52,7 @@ public class ModelConverter {
         model.put("id", payment.getInvoiceId() + "." + payment.getPaymentId());
         model.put("description", Optional.ofNullable(payment.getDescription()).orElse(""));
         model.put("amount", new BigDecimal(payment.getAmount()).movePointLeft(2));//todo get minor value from DM conf
-        model.put("currency", payment.getCurrency());
+        model.put("currency", "RUR");
         return model;
     }
 

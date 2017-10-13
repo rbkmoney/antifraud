@@ -19,10 +19,8 @@ public class ThirdPartyTest {
 
     public void testLgbtOld() {
         Payment payment = new Payment();
-        payment.setInvoiceId(System.currentTimeMillis()+"");
-        payment.setPaymentId(System.currentTimeMillis()+"");
-        payment.setDescription("gays donation");
-        payment.setClientFingerprint("11111111111111111111111111111111111112");
+        payment.setDescription("drugs guns murder");
+        payment.setClientFingerprint("11111111111111111111111111111111111111");
         payment.setClientIp("192.42.116.16");
         payment.setClientEmail("v.pankrashkin@rbkmoney.com");
         payment.setCardMask("424242******4242");
