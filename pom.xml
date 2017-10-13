@@ -6,7 +6,7 @@
 
     <groupId>com.rbkmoney</groupId>
     <artifactId>antifraud</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1-SNAPSHOT</version>
     <description>AntiFraud inspection service</description>
 
     <parent>
