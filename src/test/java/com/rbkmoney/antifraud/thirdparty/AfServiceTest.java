@@ -1,5 +1,6 @@
 package com.rbkmoney.antifraud.thirdparty;
 
+import com.rbkmoney.damsel.base.InvalidRequest;
 import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.damsel.proxy_inspector.*;
 import com.rbkmoney.damsel.proxy_inspector.Invoice;
@@ -22,7 +23,6 @@ import java.net.URISyntaxException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@Ignore
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -38,6 +38,7 @@ public class AfServiceTest {
         Assert.assertEquals(RiskScore.low, riskScore);
     }
 
+    @Ignore
     @Test
     public void testLoad() throws URISyntaxException {
         InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
@@ -49,6 +50,14 @@ public class AfServiceTest {
             }
 
         }
+    }
+
+    @Test(expected = InvalidRequest.class)
+    public void testPaymentToolValidation() throws TException, URISyntaxException {
+        InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
+        Context context = createContext();
+        context.getPayment().getPayment().getPayer().getPaymentTool().setPaymentTerminal(new PaymentTerminal(TerminalPaymentProvider.euroset));
+        client.inspectPayment(context);
     }
 
     public static Context createContext() {
