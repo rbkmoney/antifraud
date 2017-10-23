@@ -2,6 +2,7 @@ package com.rbkmoney.antifraud.thirdparty;
 
 import com.rbkmoney.antifraud.domain.tables.pojos.Payment;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,20 +23,20 @@ public class ModelConverter {
         Map<String, Object> model = new HashMap<>();
         model.put("name", payment.getShopName());
         model.put("siteUrl", payment.getShopUrl());
-        model.put("processingMerchantId", payment.getPartyId() + "." + payment.getShopId());
+        model.put("processingMerchantId", payment.getShopId());
         return model;
     }
 
     public static Map<String, Object> convertToCustomerModel(Payment payment) {
         Map<String, Object> model = new HashMap<>();
-        model.put("email", payment.getClientEmail());
-        model.put("ip", payment.getClientIp());
+        model.put("email", Optional.ofNullable(payment.getClientEmail()).orElse(""));
+        model.put("ip", Optional.ofNullable(payment.getClientIp()).orElse(""));
         return model;
     }
 
     public static Map<String, Object> convertToDeviceModel(Payment payment) {
         Map<String, Object> model = new HashMap<>();
-        model.put("machineId", payment.getClientFingerprint());
+        model.put("machineId", Optional.ofNullable(payment.getClientFingerprint()).orElse(""));
         return model;
     }
 
@@ -49,9 +50,9 @@ public class ModelConverter {
     public static Map<String, Object> convertToOrderModel(Payment payment) {
         Map<String, Object> model = new HashMap<>();
         model.put("id", payment.getInvoiceId() + "." + payment.getPaymentId());
-        model.put("description", payment.getDescription());
-        model.put("amount", payment.getAmount() / 100.);//todo get minor value from DM conf
-        model.put("currency", "RUR");
+        model.put("description", Optional.ofNullable(payment.getDescription()).orElse(""));
+        model.put("amount", new BigDecimal(payment.getAmount()).movePointLeft(2));//todo get minor value from DM conf
+        model.put("currency", "RUR");//Third party old processing bug, must be RUB but it's not recognised. Must be fixed in new processing version
         return model;
     }
 

@@ -25,6 +25,7 @@ public class AntifraudHandler implements InspectorProxySrv.Iface{
     public RiskScore inspectPayment(Context context) throws InvalidRequest, TException {
         try {
             log.info("New inspection request for invoice:{}, payment: {}", context.getPayment().getInvoice().getId(), context.getPayment().getPayment().getId());
+            ProtocolValidator.validate(context);
             Payment payment = ProtocolConverter.convertToDomain(context);
             AfResponse afResponse = service.inspect(payment);
             log.info("Third party result: {}", afResponse);

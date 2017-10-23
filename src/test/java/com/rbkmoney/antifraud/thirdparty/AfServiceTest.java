@@ -1,5 +1,6 @@
 package com.rbkmoney.antifraud.thirdparty;
 
+import com.rbkmoney.damsel.base.InvalidRequest;
 import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.damsel.proxy_inspector.*;
 import com.rbkmoney.damsel.proxy_inspector.Invoice;
@@ -22,7 +23,6 @@ import java.net.URISyntaxException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@Ignore
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -31,6 +31,7 @@ public class AfServiceTest {
     @Value("${local.server.port}")
     protected int port;
 
+    //@Ignore
     @Test
     public void integrationTest() throws URISyntaxException, TException {
         InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
@@ -38,6 +39,7 @@ public class AfServiceTest {
         Assert.assertEquals(RiskScore.low, riskScore);
     }
 
+    @Ignore
     @Test
     public void testLoad() throws URISyntaxException {
         InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
@@ -49,6 +51,14 @@ public class AfServiceTest {
             }
 
         }
+    }
+
+    @Test(expected = InvalidRequest.class)
+    public void testPaymentToolValidation() throws TException, URISyntaxException {
+        InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
+        Context context = createContext();
+        context.getPayment().getPayment().getPayer().getPaymentResource().getResource().getPaymentTool().setPaymentTerminal(new PaymentTerminal(TerminalPaymentProvider.euroset));
+        client.inspectPayment(context);
     }
 
     public static Context createContext() {
@@ -63,29 +73,25 @@ public class AfServiceTest {
                         ),
                         new InvoicePayment("pId",
                                 "",
-                                new Payer(
-                                        new PaymentTool() {{
+                                Payer.payment_resource(
+                                        new PaymentResourcePayer(new DisposablePaymentResource(new PaymentTool() {{
                                             setBankCard(new BankCard(
                                                     "477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05",
                                                     BankCardPaymentSystem.mastercard,
                                                     "424242",
-                                                    "424242******4242"
+                                                    "4242"
                                             ));
-                                        }},
-                                        "sessionId",
-                                        new ClientInfo() {{
+                                        }}, new ClientInfo() {{
                                             setIpAddress("192.42.116.16");
                                             setFingerprint("11111111111111111111111111111111111111");
-                                        }},
-                                        new ContactInfo() {{
+                                        }}), new ContactInfo() {{
                                             setEmail("v.pankrashkin@rbkmoney.com");
-                                        }}
+                                        }})
                                 ),
                                 new Cash(
                                         9000000000000000000L,
                                         new CurrencyRef("RUB")
-                                )
-                        ),
+                                )),
                         new Invoice(
                                 "iId",
                                 "",
