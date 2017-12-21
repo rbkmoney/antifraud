@@ -31,7 +31,7 @@ public class AfServiceTest {
     @Value("${local.server.port}")
     protected int port;
 
-    //@Ignore
+    @Ignore
     @Test
     public void integrationTest() throws URISyntaxException, TException {
         InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
