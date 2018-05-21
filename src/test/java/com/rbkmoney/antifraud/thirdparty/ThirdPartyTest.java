@@ -6,7 +6,7 @@ import org.junit.Test;
 
 @Ignore
 public class ThirdPartyTest {
-    AfService service = new AfService("https://rbkmoneytest.antifraud.link/PreAuthorization.ashx", "ya.arc2011@yandex.ru", "!Rbkmoney_2016!", 1, 1000, 7000);
+    AfService service = new AfService(new AfService.OKHttpTPClient("https://rbkmoneytest.antifraud.link/PreAuthorization.ashx", "ya.arc2011@yandex.ru", "!Rbkmoney_2016!", 1, 1000, 7000));
     @Test
     public void  test1() {
         System.out.println("NOW");

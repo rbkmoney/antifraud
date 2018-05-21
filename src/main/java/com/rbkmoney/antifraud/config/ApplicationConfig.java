@@ -11,8 +11,13 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
 
     @Bean
-    AfService antifraudService(@Value("${af.url}") String url, @Value("${af.username}") String username, @Value("${af.password}") String password, @Value("${af.conn.maxidle}")int maxIdle, @Value("${af.conn.keepalive}")int keepAlive, @Value("${af.conn.timeout}")int timeout) {
-        return new AfService(url, username, password, maxIdle, keepAlive, timeout);
+    AfService.TPClient tpClient(@Value("${af.url}") String url, @Value("${af.username}") String username, @Value("${af.password}") String password, @Value("${af.conn.maxidle}")int maxIdle, @Value("${af.conn.keepalive}")int keepAlive, @Value("${af.conn.timeout}")int timeout) {
+        return new AfService.OKHttpTPClient(url, username, password, maxIdle, keepAlive, timeout);
+    }
+
+    @Bean
+    AfService antifraudService(AfService.TPClient tpClient) {
+        return new AfService(tpClient);
     }
 
     @Bean

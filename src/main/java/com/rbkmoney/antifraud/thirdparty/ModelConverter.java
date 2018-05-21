@@ -12,8 +12,14 @@ public class ModelConverter {
     public static Map<String, Object> convertToPreAuthorization(Payment preAuthReq) {
         Map<String, Object> model = new HashMap<>();
         model.put("merchant", convertToMerchantModel(preAuthReq));
-        model.put("customer", convertToCustomerModel(preAuthReq));
-        model.put("device", convertToDeviceModel(preAuthReq));
+        Object customer = convertToCustomerModel(preAuthReq);
+        if (customer != null) {
+            model.put("customer", customer);
+        }
+        Object device = convertToDeviceModel(preAuthReq);
+        if (device != null) {
+            model.put("device", device);
+        }
         model.put("card", convertToCardModel(preAuthReq));
         model.put("order", convertToOrderModel(preAuthReq));
         return model;
@@ -29,15 +35,15 @@ public class ModelConverter {
 
     public static Map<String, Object> convertToCustomerModel(Payment payment) {
         Map<String, Object> model = new HashMap<>();
-        model.put("email", Optional.ofNullable(payment.getClientEmail()).orElse(""));
-        model.put("ip", Optional.ofNullable(payment.getClientIp()).orElse(""));
-        return model;
+        Optional.ofNullable(payment.getClientEmail()).ifPresent(v -> model.put("email", v));
+        Optional.ofNullable(payment.getClientIp()).ifPresent(v -> model.put("ip", v));
+        return model.isEmpty() ? null : model;
     }
 
     public static Map<String, Object> convertToDeviceModel(Payment payment) {
         Map<String, Object> model = new HashMap<>();
-        model.put("machineId", Optional.ofNullable(payment.getClientFingerprint()).orElse(""));
-        return model;
+        Optional.ofNullable(payment.getClientFingerprint()).ifPresent(v -> model.put("machineId", v));
+        return model.isEmpty() ? null : model;
     }
 
     public static Map<String, Object> convertToCardModel(Payment payment) {
@@ -61,7 +67,7 @@ public class ModelConverter {
         String tmp = String.valueOf(narrowedMap.get("response"));
         AfResponse.Status respStatus = AfResponse.Status.valueOfKey(tmp);
         Integer resultCode = Optional.ofNullable(narrowedMap.get("resultcode")).map(rc -> Integer.parseInt(String.valueOf(rc))).orElse(null);
-        Integer declineCode =  Optional.ofNullable(narrowedMap.get("declinecode")).map(rc -> Integer.parseInt(String.valueOf(rc))).orElse(null);
+        Integer declineCode = Optional.ofNullable(narrowedMap.get("declinecode")).map(rc -> Integer.parseInt(String.valueOf(rc))).orElse(null);
         return new AfResponse(respStatus, resultCode, declineCode);
     }
 }
