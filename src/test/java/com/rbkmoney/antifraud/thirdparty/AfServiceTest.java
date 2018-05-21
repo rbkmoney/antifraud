@@ -1,7 +1,10 @@
 package com.rbkmoney.antifraud.thirdparty;
 
+import com.rbkmoney.antifraud.AntifraudApplication;
+import com.rbkmoney.antifraud.config.ApplicationConfig;
 import com.rbkmoney.damsel.base.InvalidRequest;
 import com.rbkmoney.damsel.domain.*;
+import com.rbkmoney.damsel.payment_processing.Customer;
 import com.rbkmoney.damsel.proxy_inspector.*;
 import com.rbkmoney.damsel.proxy_inspector.Invoice;
 import com.rbkmoney.damsel.proxy_inspector.InvoicePayment;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,11 +29,25 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = AfServiceTest.Config.class)
 public class AfServiceTest {
+
+    @Profile("test")
+    @Configuration
+    @Import(AntifraudApplication.class)
+    public static class Config {
+
+        @Bean
+        @Primary
+        public AfService.TPClient mockedTPClient() {
+            return (request -> "{\"response\": \"Approve\", \"resultcode\":0}");
+        }
+    }
 
     @Value("${local.server.port}")
     protected int port;
+
+
 
     @Ignore
     @Test
@@ -61,6 +79,31 @@ public class AfServiceTest {
         client.inspectPayment(context);
     }
 
+    @Test
+    public void testCustomer() throws URISyntaxException, TException {
+        InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
+        Context context = createContext();
+        context.getPayment().getPayment().setPayer(createCustomerPayer());
+        RiskScore riskScore = client.inspectPayment(context);
+        Assert.assertEquals(RiskScore.low, riskScore);
+    }
+
+    public static Payer createCustomerPayer() {
+        return Payer.customer(new CustomerPayer("custId", "1", "rec_paym_tool", createBankCard()));
+
+    }
+
+    public static PaymentTool createBankCard() {
+        return new PaymentTool() {{
+            setBankCard(new BankCard(
+                    "477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05",
+                    BankCardPaymentSystem.mastercard,
+                    "424242",
+                    "4242"
+            ));
+        }};
+    }
+
     public static Context createContext() {
         return new Context(
                 new PaymentInfo(
@@ -74,14 +117,7 @@ public class AfServiceTest {
                         new InvoicePayment("pId",
                                 "",
                                 Payer.payment_resource(
-                                        new PaymentResourcePayer(new DisposablePaymentResource(new PaymentTool() {{
-                                            setBankCard(new BankCard(
-                                                    "477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05",
-                                                    BankCardPaymentSystem.mastercard,
-                                                    "424242",
-                                                    "4242"
-                                            ));
-                                        }}, new ClientInfo() {{
+                                        new PaymentResourcePayer(new DisposablePaymentResource(createBankCard(), new ClientInfo() {{
                                             setIpAddress("192.42.116.16");
                                             setFingerprint("11111111111111111111111111111111111111");
                                         }}), new ContactInfo() {{

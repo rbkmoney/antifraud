@@ -15,11 +15,14 @@ public class ProtocolConverter {
         afPayment.setCardMask(card.getBin() + "******" + card.getMaskedPan());
 
         ContactInfo contactInfo = getContactInfo(context);
-        afPayment.setClientEmail(contactInfo.getEmail());
-
+        if (contactInfo != null) {
+            afPayment.setClientEmail(contactInfo.getEmail());
+        }
         ClientInfo clientInfo = getClientInfo(context);
-        afPayment.setClientIp(clientInfo.getIpAddress());
-        afPayment.setClientFingerprint(clientInfo.getFingerprint());
+        if (clientInfo != null) {
+            afPayment.setClientIp(clientInfo.getIpAddress());
+            afPayment.setClientFingerprint(clientInfo.getFingerprint());
+        }
 
         afPayment.setInvoiceId(context.getPayment().getInvoice().getId());
         afPayment.setPaymentId(context.getPayment().getPayment().getId());

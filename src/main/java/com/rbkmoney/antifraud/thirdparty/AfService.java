@@ -15,21 +15,14 @@ import java.util.concurrent.TimeUnit;
 public class AfService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static final TypeReference<HashMap<String,Object>> RESP_TYPE_REF = new TypeReference<HashMap<String,Object>>() {};
+    private static final TypeReference<HashMap<String, Object>> RESP_TYPE_REF = new TypeReference<HashMap<String, Object>>() {
+    };
 
 
-    private final String preAuthUrl;
-    private final OkHttpClient client;
+    private final TPClient client;
 
-    public AfService(String preAuthUrl, String user, String password, int maxIdleConnections, int keepAliveDuration, int timeout) {
-        this.preAuthUrl = preAuthUrl;
-        client = new OkHttpClient.Builder()
-                .addInterceptor(new BasicAuthInterceptor(user, password))
-                .connectionPool(new ConnectionPool(maxIdleConnections, keepAliveDuration, TimeUnit.MILLISECONDS))
-                .connectTimeout(timeout, TimeUnit.MILLISECONDS)
-                .writeTimeout(timeout, TimeUnit.MILLISECONDS)
-                .readTimeout(timeout, TimeUnit.MILLISECONDS)
-                .build();
+    public AfService(TPClient client) {
+        this.client = client;
     }
 
     public AfResponse inspect(Payment payment) throws ThirdPartyException {
@@ -37,8 +30,39 @@ public class AfService {
             Map<String, Object> reqModel = ModelConverter.convertToPreAuthorization(payment);
             ObjectMapper mapper = new ObjectMapper();
             String requestStr = mapper.writeValueAsString(reqModel);
-            log.info("Sending request: {} to url {}", requestStr, preAuthUrl);
+            String responseStr = client.callInspection(requestStr);
+            Map<String, Object> respModel = mapper.readValue(responseStr, RESP_TYPE_REF);
+            return ModelConverter.convertFromPreAuthorization(respModel);
+        } catch (Exception e) {
+            throw new ThirdPartyException(e);
+        }
+    }
 
+    public interface TPClient {
+        String callInspection(String request) throws Exception;
+    }
+
+    public static class OKHttpTPClient implements TPClient {
+        private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+        private final String preAuthUrl;
+        private final OkHttpClient client;
+
+        public OKHttpTPClient(String preAuthUrl, String user, String password, int maxIdleConnections, int keepAliveDuration, int timeout) {
+            this.preAuthUrl = preAuthUrl;
+            client = new OkHttpClient.Builder()
+                    .addInterceptor(new BasicAuthInterceptor(user, password))
+                    .connectionPool(new ConnectionPool(maxIdleConnections, keepAliveDuration, TimeUnit.MILLISECONDS))
+                    .connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                    .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                    .readTimeout(timeout, TimeUnit.MILLISECONDS)
+                    .build();
+        }
+
+
+        @Override
+        public String callInspection(String requestStr) throws Exception {
+            log.info("Sending request: {} to url {}", requestStr, preAuthUrl);
             Response response = client.newCall(
                     new Request.Builder()
                             .url(preAuthUrl)
@@ -46,10 +70,7 @@ public class AfService {
             ).execute();
             String responseStr = response.body().string();//todo add resp size limits
             log.info("Received response: {}", responseStr);
-            Map<String, Object> respModel = mapper.readValue(responseStr, RESP_TYPE_REF);
-            return ModelConverter.convertFromPreAuthorization(respModel);
-        } catch (Exception e) {
-            throw new ThirdPartyException(e);
+            return responseStr;
         }
     }
 
