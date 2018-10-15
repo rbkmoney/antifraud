@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <postgresql.jdbc.version>9.4.1212</postgresql.jdbc.version>
         <dockerfile.base.service.tag>22c57470c4fc47161894f036b7cf9d70f42b75f5</dockerfile.base.service.tag>
-        <damsel.version>1.171-2b2e351</damsel.version>
+        <damsel.version>1.264-e044dd7</damsel.version>
         <shared.resources.version>0.2.1</shared.resources.version>
 
  <!--       <db.host.name>localhost</db.host.name>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.204-478235a</version>
+            <version>${damsel.version}</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>

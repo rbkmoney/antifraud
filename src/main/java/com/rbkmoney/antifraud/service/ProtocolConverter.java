@@ -46,6 +46,10 @@ public class ProtocolConverter {
             if (payer.getPaymentResource().getResource().getPaymentTool().isSetBankCard()) {
                 return payer.getPaymentResource().getResource().getPaymentTool().getBankCard();
             }
+        } else if (payer.isSetRecurrent()) {
+            if (payer.getRecurrent().getPaymentTool().isSetBankCard()) {
+                return payer.getRecurrent().getPaymentTool().getBankCard();
+            }
         }
         return null;
     }
