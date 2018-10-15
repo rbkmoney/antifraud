@@ -88,8 +88,21 @@ public class AfServiceTest {
         Assert.assertEquals(RiskScore.low, riskScore);
     }
 
+    @Test
+    public void testRecurrent() throws URISyntaxException, TException {
+        InspectorProxySrv.Iface client = new THSpawnClientBuilder().withAddress(new URI("http://localhost:" + port + "/inspector")).withNetworkTimeout(0).build(InspectorProxySrv.Iface.class);
+        Context context = createContext();
+        context.getPayment().getPayment().setPayer(createRecurrentPayer());
+        RiskScore riskScore = client.inspectPayment(context);
+        Assert.assertEquals(RiskScore.low, riskScore);
+    }
+
+    public static Payer createRecurrentPayer() {
+        return Payer.recurrent(new RecurrentPayer(createBankCard(), new RecurrentParentPayment("invoiceId", "paymentId"), new ContactInfo()));
+    }
+
     public static Payer createCustomerPayer() {
-        return Payer.customer(new CustomerPayer("custId", "1", "rec_paym_tool", createBankCard()));
+        return Payer.customer(new CustomerPayer("custId", "1", "rec_paym_tool", createBankCard(), new ContactInfo()));
 
     }
 
@@ -117,10 +130,7 @@ public class AfServiceTest {
                         new InvoicePayment("pId",
                                 "",
                                 Payer.payment_resource(
-                                        new PaymentResourcePayer(new DisposablePaymentResource(createBankCard(), new ClientInfo() {{
-                                            setIpAddress("192.42.116.16");
-                                            setFingerprint("11111111111111111111111111111111111111");
-                                        }}), new ContactInfo() {{
+                                        new PaymentResourcePayer(new DisposablePaymentResource(createBankCard()), new ContactInfo() {{
                                             setEmail("v.pankrashkin@rbkmoney.com");
                                         }})
                                 ),
