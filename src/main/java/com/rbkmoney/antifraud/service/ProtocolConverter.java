@@ -55,15 +55,21 @@ public class ProtocolConverter {
     }
 
     public static ContactInfo getContactInfo(Context context) {
-        if (context.getPayment().getPayment().getPayer().isSetPaymentResource()) {
-            return context.getPayment().getPayment().getPayer().getPaymentResource().getContactInfo();
+        Payer payer = context.getPayment().getPayment().getPayer();
+        if (payer.isSetPaymentResource()) {
+            return payer.getPaymentResource().getContactInfo();
+        } else if (payer.isSetCustomer()) {
+            return payer.getCustomer().getContactInfo();
+        } else if (payer.isSetRecurrent()) {
+            return payer.getRecurrent().getContactInfo();
         }
         return null;
     }
 
     public static ClientInfo getClientInfo(Context context) {
-        if (context.getPayment().getPayment().getPayer().isSetPaymentResource()) {
-            return context.getPayment().getPayment().getPayer().getPaymentResource().getResource().getClientInfo();
+        Payer payer = context.getPayment().getPayment().getPayer();
+        if (payer.isSetPaymentResource()) {
+            return payer.getPaymentResource().getResource().getClientInfo();
         }
         return null;
     }
