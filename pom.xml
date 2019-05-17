@@ -23,14 +23,6 @@
         <dockerfile.base.service.tag>22c57470c4fc47161894f036b7cf9d70f42b75f5</dockerfile.base.service.tag>
         <damsel.version>1.264-e044dd7</damsel.version>
         <shared.resources.version>0.2.1</shared.resources.version>
-
- <!--       <db.host.name>localhost</db.host.name>
-        <db.host.port>5432</db.host.port>
-        <db.name>antifraud</db.name>
-        <db.url>jdbc:postgresql://${db.host.name}:${db.host.port}/${db.name}</db.url>
-        <db.user>postgres</db.user>
-        <db.password>postgres</db.password>
-        <db.schema>af</db.schema>-->
     </properties>
     <profiles>
         <profile>
@@ -53,10 +45,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
- <!--       <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -67,15 +55,6 @@
             <version>1.4.1</version>
         </dependency>
         <!--Thirdparty libs-->
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.jdbc.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
@@ -116,6 +95,22 @@
             <artifactId>shared-resources</artifactId>
             <version>${shared.resources.version}</version>
         </dependency>
+        <!--third party-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.orbitz.consul</groupId>
+            <artifactId>consul-client</artifactId>
+            <version>1.3.2</version>
+        </dependency>
         <!--Test libs-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -155,26 +150,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
-            <!--<plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway.version}</version>
-                <configuration>
-                    <url>${db.url}</url>
-                    <user>${db.user}</user>
-                    <password>${db.password}</password>
-                    <schemas>
-                        <schema>${db.schema}</schema>
-                    </schemas>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.jdbc.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-remote-resources-plugin</artifactId>
@@ -201,46 +176,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- JOOQ -->
-            <!--<plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <version>${jooq.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.jdbc.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <jdbc>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>${db.url}</url>
-                        <user>${db.user}</user>
-                        <password>${db.password}</password>
-                    </jdbc>
-                    <generator>
-                        <generate>
-                            <javaTimeTypes>true</javaTimeTypes>
-                            <pojos>true</pojos>
-                            <pojosEqualsAndHashCode>true</pojosEqualsAndHashCode>
-                            <pojosToString>true</pojosToString>
-                        </generate>
-                        <database>
-                            <name>org.jooq.util.postgres.PostgresDatabase</name>
-                            <includes>.*</includes>
-                            <excludes>schema_version</excludes>
-                            <inputSchema>${db.schema}</inputSchema>
-                        </database>
-                        <target>
-                            <packageName>com.rbkmoney.antifraud.domain</packageName>
-                            <directory>src/main/java/</directory>
-                        </target>
-                    </generator>
-                </configuration>
-            </plugin>-->
         </plugins>
     </build>
 

@@ -1,8 +1,10 @@
 package com.rbkmoney.antifraud.config;
 
 import com.rbkmoney.antifraud.service.AntifraudHandler;
+import com.rbkmoney.antifraud.service.PartyFilterService;
 import com.rbkmoney.antifraud.thirdparty.AfService;
 import com.rbkmoney.damsel.proxy_inspector.InspectorProxySrv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +23,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    InspectorProxySrv.Iface antifraudHandler(AfService afService) {
-        return new AntifraudHandler(afService);
+    @Autowired
+    InspectorProxySrv.Iface antifraudHandler(AfService afService, PartyFilterService partyFilterService, InspectorProxySrv.Iface inspectorProxySrv) {
+        return new AntifraudHandler(afService, partyFilterService, inspectorProxySrv);
     }
 }
