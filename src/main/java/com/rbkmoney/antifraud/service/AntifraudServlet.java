@@ -18,13 +18,13 @@ public class AntifraudServlet extends GenericServlet {
     private Servlet thriftServlet;
 
     @Autowired
-    private InspectorProxySrv.Iface requestHandler;
+    private InspectorProxySrv.Iface antifraudHandler;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         thriftServlet = new THServiceBuilder()
-                .build(InspectorProxySrv.Iface.class, requestHandler);
+                .build(InspectorProxySrv.Iface.class, antifraudHandler);
     }
 
     @Override
