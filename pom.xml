@@ -20,6 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <postgresql.jdbc.version>9.4.1212</postgresql.jdbc.version>
         <dockerfile.base.service.tag>bc95d0d6dc13c693acd2b274531a7d604b877bf3</dockerfile.base.service.tag>
+        <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
         <damsel.version>1.305-0b8b408</damsel.version>
         <shared.resources.version>0.3.6</shared.resources.version>
     </properties>
