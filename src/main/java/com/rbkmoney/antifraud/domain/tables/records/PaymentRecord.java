@@ -630,6 +630,76 @@ public class PaymentRecord extends UpdatableRecordImpl<PaymentRecord> implements
         return this;
     }
 
+    @Override
+    public String component1() {
+        return this.value1();
+    }
+
+    @Override
+    public String component2() {
+        return this.value2();
+    }
+
+    @Override
+    public String component3() {
+        return this.value3();
+    }
+
+    @Override
+    public String component4() {
+        return this.value4();
+    }
+
+    @Override
+    public String component5() {
+        return this.value5();
+    }
+
+    @Override
+    public String component6() {
+        return this.value6();
+    }
+
+    @Override
+    public String component7() {
+        return this.value7();
+    }
+
+    @Override
+    public String component8() {
+        return this.value8();
+    }
+
+    @Override
+    public String component9() {
+        return this.value9();
+    }
+
+    @Override
+    public Long component10() {
+        return this.value10();
+    }
+
+    @Override
+    public String component11() {
+        return this.value11();
+    }
+
+    @Override
+    public String component12() {
+        return this.value12();
+    }
+
+    @Override
+    public String component13() {
+        return this.value13();
+    }
+
+    @Override
+    public String component14() {
+        return this.value14();
+    }
+
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
